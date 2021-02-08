@@ -64,7 +64,6 @@ module mmio_sys_vanilla
     );
 
    // slot 1: UART 
-   /*
    chu_uart uart_slot1 
    (.clk(clk),
     .reset(reset),
@@ -76,7 +75,7 @@ module mmio_sys_vanilla
     .wr_data(wr_data_array[`S1_UART1]), 
     .tx(tx),
     .rx(rx)
-    );*/
+    );
    //assign rd_data_array[1] = 32'h00000000;
   
 

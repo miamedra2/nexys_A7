@@ -93,7 +93,7 @@ int main() {
       timer_check(&led);
       led_check(&led, 16);
       sw_check(&led, &sw);
-      //uart_check();
+      uart_check();
       debug("main - switch value / up time : ", sw.read(), now_ms());
    } //while
 } //main
