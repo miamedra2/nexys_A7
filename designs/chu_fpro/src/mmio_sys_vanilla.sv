@@ -63,7 +63,7 @@ module mmio_sys_vanilla
     .wr_data(wr_data_array[`S0_SYS_TIMER])
     );
 
-   // slot 1: UART 
+   // slot 1: UART   
    chu_uart uart_slot1 
    (.clk(clk),
     .reset(reset),
