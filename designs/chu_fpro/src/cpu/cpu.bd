@@ -1,0 +1,112 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0xD602736F7193E262",
+      "device": "xc7a100tcsg324-1",
+      "name": "cpu",
+      "synth_flow_mode": "Hierarchical",
+      "tool_version": "2018.3",
+      "validated": "true"
+    },
+    "design_tree": {
+      "microblaze_mcs_0": ""
+    },
+    "interface_ports": {
+      "IO": {
+        "mode": "Master",
+        "vlnv": "xilinx.com:interface:mcsio_bus_rtl:1.0"
+      }
+    },
+    "ports": {
+      "Clk": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "ASSOCIATED_RESET": {
+            "value": "Reset"
+          },
+          "CLK_DOMAIN": {
+            "value": "cpu_Clk_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.000",
+            "value_src": "default"
+          }
+        }
+      },
+      "Reset": {
+        "type": "rst",
+        "direction": "I",
+        "parameters": {
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "POLARITY": {
+            "value": "ACTIVE_LOW"
+          }
+        }
+      }
+    },
+    "components": {
+      "microblaze_mcs_0": {
+        "vlnv": "xilinx.com:ip:microblaze_mcs:3.0",
+        "xci_name": "cpu_microblaze_mcs_0_0",
+        "parameters": {
+          "DEBUG_ENABLED": {
+            "value": "2"
+          },
+          "MEMSIZE": {
+            "value": "131072"
+          },
+          "USE_IO_BUS": {
+            "value": "1"
+          },
+          "USE_UART_RX": {
+            "value": "0"
+          },
+          "USE_UART_TX": {
+            "value": "0"
+          }
+        },
+        "interface_ports": {
+          "IO": {
+            "mode": "Master",
+            "vlnv": "xilinx.com:interface:mcsio_bus_rtl:1.0"
+          }
+        }
+      }
+    },
+    "interface_nets": {
+      "microblaze_mcs_0_IO": {
+        "interface_ports": [
+          "IO",
+          "microblaze_mcs_0/IO"
+        ]
+      }
+    },
+    "nets": {
+      "Clk_0_1": {
+        "ports": [
+          "Clk",
+          "microblaze_mcs_0/Clk"
+        ]
+      },
+      "Reset_0_1": {
+        "ports": [
+          "Reset",
+          "microblaze_mcs_0/Reset"
+        ]
+      }
+    }
+  }
+}
