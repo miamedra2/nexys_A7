@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 02/05/2021 09:25:52 PM
+// Create Date: 02/05/2021 06:08:44 PM
 // Design Name: 
-// Module Name: uart_tb
+// Module Name: uart_tx_tb
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,8 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module uart_tb;
-
+module uart_tx_tb;
 
 
 	// Local parameters
@@ -33,9 +32,11 @@ module uart_tb;
 	// Clock periods
 	localparam time REFCLK_PERIOD      = (1.0e9/REFCLK_FREQUENCY)*1ns;
 	
-	localparam DATABIT         = 8;
-	localparam TICK_STOPBIT    = 16;
-	localparam FIFO_WIDTH      = 2;
+	localparam DATABIT     = 8;
+	
+	localparam TICK_STOPBIT   = 16;
+	
+	
 
 	// -------------------------------------------------------------------------
 	// Internal Signals
@@ -45,13 +46,15 @@ module uart_tb;
 	logic sys_clk, reset;
 	
     // Logic
-    logic rd_uart, wr_uart;
-	logic loopback_wire;
-	logic [7:0] w_data, r_data;
-	logic [10:0] dvsr;
-	logic tx_full;
-	logic rx_empty;
-	
+    logic [10:0] dvsr;
+    
+    logic tx_start, tx_done_tick;
+    
+    // Output Logic
+    logic tick, tx;
+    
+    logic [7:0] din;
+    
     // -------------------------------------------------------------------------
 	// Clk generator
 	// -------------------------------------------------------------------------
@@ -65,25 +68,25 @@ module uart_tb;
 	
 	
 	// -------------------------------------------------------------------------
-	// Reads from the rxfifo if its not empty
+	// Restarts uart_tx after tx_done_tick goes high
 	// -------------------------------------------------------------------------
 	//
 	initial begin
-	
-	   rd_uart = 0;
-
+	   
+	   din = 8'hAA;
+	   
 	   forever begin
 	   @(sys_clk)
-	       if(~rx_empty) begin
+	       if(tx_done_tick) begin
 	       
 	           // start transmit 
-		      #(1*REFCLK_PERIOD);
+		      #(20*REFCLK_PERIOD);
 		      @(posedge sys_clk);
-		      rd_uart = 1'b1;
+		      tx_start = 1'b1;
 		      
-		      #(100*REFCLK_PERIOD);
+		      #(20*REFCLK_PERIOD);
 		      @(posedge sys_clk);
-		      rd_uart = 1'b0;
+		      tx_start = 1'b0;
 		      end
         end
     end
@@ -95,6 +98,8 @@ module uart_tb;
 	//
 	initial begin
 		reset = 1'b0;
+		
+		
 		dvsr = 10'h2;
 		
 		// Synchronous assertion of reset
@@ -106,61 +111,37 @@ module uart_tb;
 		#(10*REFCLK_PERIOD);
 		@(posedge sys_clk);
 		reset = 1'b0;
-		w_data = 8'hAA;
 		
 		// start transmit 
-		#(1*REFCLK_PERIOD);
+		#(20*REFCLK_PERIOD);
 		@(posedge sys_clk);
-		wr_uart = 1'b1;
+		tx_start = 1'b1;
 		
-		#(1*REFCLK_PERIOD);
+		#(20*REFCLK_PERIOD);
 		@(posedge sys_clk);
-		wr_uart = 1'b0;
+		tx_start = 1'b0;
 		
-		#(1*REFCLK_PERIOD);
-		@(posedge sys_clk);
-		w_data = 8'hAB;
-		
-		// start transmit 
-		#(1*REFCLK_PERIOD);
-		@(posedge sys_clk);
-		wr_uart = 1'b1;
-
-		#(1*REFCLK_PERIOD);
-		@(posedge sys_clk);
-		wr_uart = 1'b0;
-		
-		#(1*REFCLK_PERIOD);
-		@(posedge sys_clk);
-		w_data = 8'hAC;
-		
-		// start transmit 
-		#(1*REFCLK_PERIOD);
-		@(posedge sys_clk);
-		wr_uart = 1'b1;
-
-		#(1*REFCLK_PERIOD);
-		@(posedge sys_clk);
-		wr_uart = 1'b0;
-	
 	end
+	
+	baud_gen u0
+	(
+	   .clk    (sys_clk),
+	   .reset  (reset),
+	   .dvsr   (dvsr),
+	   .tick   (tick)
+	   );
+	   
 
-	uart #(.DBIT(DATABIT), .SB_TICK(TICK_STOPBIT), .FIFO_W(FIFO_WIDTH)) u0
-	      (
-	       .clk        (sys_clk),
-	       .reset      (reset),
-	       .rd_uart    (rd_uart),
-	       .wr_uart    (wr_uart),
-	       .rx         (loopback_wire),
-	       .w_data     (w_data),
-	       .dvsr       (dvsr),
-	       .tx_full    (tx_full),
-	       .rx_empty   (rx_empty),
-	       .tx         (loopback_wire),
-	       .r_data     (r_data)
-	       );
-   
-
+    uart_tx #(.DBIT(DATABIT), .SB_TICK(TICK_STOPBIT)) u1
+    (
+        .clk            (sys_clk),
+        .reset          (reset),
+        .tx_start       (tx_start),
+        .s_tick         (tick),
+        .din            (din),
+        .tx_done_tick   (tx_done_tick),
+        .tx             (tx)
+    );
 
 	// -------------------------------------------------------------------------
 	// RX In Generator
@@ -177,7 +158,7 @@ module uart_tb;
 		
 		
 		// Wait
-		#(500*REFCLK_PERIOD);
+		#(300*REFCLK_PERIOD);
 		
 		
 		

@@ -45,6 +45,7 @@ module chu_uart
    assign wr_uart = (write && cs && (addr[1:0]==2'b10));
    assign rd_uart = (write && cs && (addr[1:0]==2'b11));
    // slot read interface
-   assign rd_data = {22'h000000, tx_full,  rx_empty, r_data};
+   assign rd_data = {11'h0000, dvsr_reg, tx_full,  rx_empty, r_data};
+   //assign rd_data = {22'h000000, tx_full,  rx_empty, r_data};
 endmodule
 

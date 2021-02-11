@@ -69,9 +69,9 @@ module uart_tb;
 	// -------------------------------------------------------------------------
 	//
 	initial begin
-	
-	   rd_uart = 0;
 
+       rd_uart = 1'b0;
+       
 	   forever begin
 	   @(sys_clk)
 	       if(~rx_empty) begin
@@ -81,7 +81,7 @@ module uart_tb;
 		      @(posedge sys_clk);
 		      rd_uart = 1'b1;
 		      
-		      #(100*REFCLK_PERIOD);
+		      #(1*REFCLK_PERIOD);
 		      @(posedge sys_clk);
 		      rd_uart = 1'b0;
 		      end

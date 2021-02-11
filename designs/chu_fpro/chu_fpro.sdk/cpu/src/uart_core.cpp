@@ -19,10 +19,13 @@ UartCore::~UartCore() {
 
 /* baud rate = sys_clk_freq/16/(dvsr+1) */
 void UartCore::set_baud_rate(int baud) {
-   uint32_t dvsr;
+   uint32_t dvsr, rd_word;
+   int dvsr_check;
 
    dvsr = SYS_CLK_FREQ*1000000 / 16 / baud - 1;
    io_write(base_addr, DVSR_REG, dvsr);
+   rd_word = io_read(base_addr, RD_DATA_REG);
+   dvsr_check = (int) (rd_word & 0x1FFC00) >> 10;
 }
 
 int UartCore::rx_fifo_empty() {

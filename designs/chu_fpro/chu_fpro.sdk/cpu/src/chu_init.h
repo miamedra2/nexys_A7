@@ -29,8 +29,6 @@
 #ifndef _CHU_INIT_H_INCLUDED
 #define _CHU_INIT_H_INCLUDED
 
-#define _DEBUG
-
 // library
 #include "chu_io_rw.h"
 #include "chu_io_map.h"
